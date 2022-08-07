@@ -44,6 +44,24 @@ def tidyArchiveLinks(base_domain: str, regex: str, dryrun: bool = False) -> int:
     return tidyCount
 
 
+def markMaintenceNeeded(dryrun: bool = False) -> int:
+    """"""
+    markCount = 0
+    cursor.execute(
+        f"SELECT * FROM {constants.DB_TABLE} WHERE needs_maintenance = 0 AND base_domain = ''"
+    )
+    result = cursor.fetchall()
+    for row in result:
+        cursor.execute(
+            f"UPDATE {constants.DB_TABLE} SET needs_maintenance = 1 WHERE record_id = {row[0]}"
+        )
+        if not dryrun:
+            db.commit()
+        markCount += 1
+
+    return markCount
+
+
 def tidyLinks(dryrun: bool = False) -> None:
     """Tidy links"""
     print("Tidying archive.org links...")
@@ -56,8 +74,12 @@ def doMaintenance(dryrun: bool = False) -> None:
     print("=== Data maintenance ===")
     if dryrun:
         print("Dry run, no changes will be made")
+    print(f"Running on db: {constants.DB_DATABASE}")
     print(f"Running on table: {constants.DB_TABLE}", end="\n\n")
     tidyLinks(dryrun)
+    markCount = markMaintenceNeeded(dryrun)
+    if markCount > 0:
+        print(f"[WARN] Marked {markCount} records as still needing maintenance")
     print("Finished data maintenance!")
 
 
@@ -80,6 +102,7 @@ def getCount() -> int:
 def doStats() -> None:
     """Do stats"""
     print("=== Stats ===")
+    print(f"Running on db: {constants.DB_DATABASE}")
     print(f"Running on view: {constants.DB_VIEW}", end="\n\n")
     print(f"Total rows: {getCount()}")
     print(f"Empty base domains: {getEmpty()}")
