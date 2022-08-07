@@ -15,6 +15,7 @@ db = mysql.connector.connect(
 )
 cursor = db.cursor()
 
+
 def logToDatabase(
     site: str,
     page_id: int,
