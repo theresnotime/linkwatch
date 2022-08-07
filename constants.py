@@ -9,7 +9,9 @@ dotenv.load_dotenv()
 # Version
 VERSION = "1.0.0"
 
-with open("config/allowlist.json", encoding="utf-8") as allowfile:
+CWD = os.getcwd()
+
+with open(CWD + "/config/allowlist.json", encoding="utf-8") as allowfile:
     ALLOWLIST = json.load(allowfile)
 
 # Constants
