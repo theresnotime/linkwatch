@@ -18,23 +18,37 @@ args = sys.argv[1:]
 def searchBase() -> None:
     """"""
     base = args[1]
+
+    # Shush.
+    if len(args) > 1:
+        count = True
+    else:
+        count = False
+
     print("=== Base domain search ===")
     print(f"Query: {base}")
     print(f"Searching on db: {constants.DB_DATABASE}")
     print(f"Searching on table: {constants.DB_TABLE}", end="\n\n")
 
-    cursor.execute(
-        f"SELECT added_date, user_name, page_title, site, rev_id, url FROM {constants.DB_VIEW} WHERE base_domain = '{base}'"
-    )
-    result = cursor.fetchall()
-    print(
-        "|       Date        |        User        |        Diff        |        Page        |        URL        |"
-    )
-    for row in result:
-        print(
-            f"| {row[0]} | https://{row[3]}/wiki/User:{row[1]} | https://{row[3]}/wiki/Special:Diff/{row[4]} | https://{row[3]}/wiki/{row[2]} | {row[5]} |"
+    if count is False:
+        cursor.execute(
+            f"SELECT added_date, user_name, page_title, site, rev_id, url FROM {constants.DB_VIEW} WHERE base_domain = '{base}'"
         )
-
+        result = cursor.fetchall()
+        print(f"{len(result)} results found")
+        print(
+            "|       Date        |        User        |        Diff        |        Page        |        URL        |"
+        )
+        for row in result:
+            print(
+                f"| {row[0]} | https://{row[3]}/wiki/User:{row[1]} | https://{row[3]}/wiki/Special:Diff/{row[4]} | https://{row[3]}/wiki/{row[2]} | {row[5]} |"
+            )
+    else:
+        cursor.execute(
+            f"SELECT COUNT(record_id) as `count` FROM {constants.DB_VIEW} WHERE base_domain = '{base}'"
+        )
+        result = cursor.fetchone()
+        print(f"{result[0]} results found")
 
 if __name__ == "__main__":
     if len(args) < 2:

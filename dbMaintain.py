@@ -144,6 +144,8 @@ if __name__ == "__main__":
             doMaintenance(dryrun)
         elif args[0] == "stats":
             doStats()
+        elif args[0] == "archiveorg":
+            tidyCount = tidyArchiveLinks("archive.org", constants.RE_ARCHIVEORG, dryrun)
         else:
             print("Invalid argument, exiting...")
             exit(1)
