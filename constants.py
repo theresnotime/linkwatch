@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import typing
 
 import dotenv
@@ -26,3 +27,9 @@ DB_USER = typing.cast(str, os.getenv("DB_USER"))
 DB_PASSWORD = typing.cast(str, os.getenv("DB_PASSWORD"))
 DB_DATABASE = typing.cast(str, os.getenv("DB_DATABASE"))
 DB_PORT = typing.cast(str, os.getenv("DB_PORT"))
+DB_TABLE = typing.cast(str, os.getenv("DB_TABLE"))
+
+# Regexes
+RE_ARCHIVEORG = re.compile(
+    r"http(s)?://web\.archive\.org\/web\/\d+\/(?P<url>http(s)?:.*)$", re.IGNORECASE
+)

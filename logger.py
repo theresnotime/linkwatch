@@ -33,8 +33,18 @@ def logToDatabase(
     else:
         base_domain = None
 
-    sql = "INSERT INTO global_added_test (added_date, site, page_id, page_title, rev_id, user_name, url, base_domain) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (datetime, site, page_id, page_title, rev_id, user_name, link, base_domain)
+    sql = f"INSERT INTO {constants.DB_TABLE} "
+    sql += "(added_date, site, page_id, page_title, rev_id, user_name, url, base_domain) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (
+        datetime,
+        site,
+        page_id,
+        page_title,
+        rev_id,
+        user_name,
+        link,
+        base_domain,
+    )
     cursor.execute(sql, values)
 
     db.commit()
