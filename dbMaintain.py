@@ -83,6 +83,24 @@ def doMaintenance(dryrun: bool = False) -> None:
     print("Finished data maintenance!")
 
 
+def getLikelyArchives() -> int:
+    """"""
+    cursor.execute(
+        f"SELECT COUNT(record_id) as `count` FROM {constants.DB_VIEW} WHERE base_domain LIKE '%archive%'"
+    )
+    result = cursor.fetchone()
+    return result[0]
+
+
+def getMarked() -> int:
+    """"""
+    cursor.execute(
+        f"SELECT COUNT(record_id) as `count` FROM {constants.DB_VIEW} WHERE needs_maintenance = 1"
+    )
+    result = cursor.fetchone()
+    return result[0]
+
+
 def getEmpty() -> int:
     """"""
     cursor.execute(
@@ -105,7 +123,9 @@ def doStats() -> None:
     print(f"Running on db: {constants.DB_DATABASE}")
     print(f"Running on view: {constants.DB_VIEW}", end="\n\n")
     print(f"Total rows: {getCount()}")
-    print(f"Empty base domains: {getEmpty()}")
+    print(f"Rows marked as needing maintenance: {getMarked()}")
+    print(f"Rows with empty base domains: {getEmpty()}")
+    print(f"Rows with likely archive base domains: {getLikelyArchives()}")
 
 
 if __name__ == "__main__":
