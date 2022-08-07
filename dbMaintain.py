@@ -1,3 +1,4 @@
+import logging
 import re
 import sys
 
@@ -14,6 +15,17 @@ db = mysql.connector.connect(
     port=constants.DB_PORT,
 )
 cursor = db.cursor()
+
+logging.basicConfig(
+    handlers=[
+        logging.FileHandler("linkwatch.maintenance.log"),
+        logging.StreamHandler(),
+    ],
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="[%(asctime)s]: %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def tidyArchiveLinks(base_domain: str, regex: str, dryrun: bool = False) -> int:
@@ -81,6 +93,7 @@ def doMaintenance(dryrun: bool = False) -> None:
     if markCount > 0:
         print(f"[WARN] Marked {markCount} records as still needing maintenance")
     print("Finished data maintenance!")
+    logging.info("Finished data maintenance")
 
 
 def getLikelyArchives() -> int:
@@ -146,6 +159,7 @@ if __name__ == "__main__":
             doStats()
         elif args[0] == "archiveorg":
             tidyCount = tidyArchiveLinks("archive.org", constants.RE_ARCHIVEORG, dryrun)
+            logging.info(f"Tidied {tidyCount} archive.org links")
         else:
             print("Invalid argument, exiting...")
             exit(1)

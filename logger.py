@@ -1,3 +1,4 @@
+import logging
 import re
 
 import mysql.connector
@@ -13,6 +14,14 @@ db = mysql.connector.connect(
     port=constants.DB_PORT,
 )
 cursor = db.cursor()
+
+logging.basicConfig(
+    handlers=[logging.FileHandler("linkwatch.db.log"), logging.StreamHandler()],
+    encoding="utf-8",
+    level=logging.INFO,
+    format="[%(asctime)s]: %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def logToDatabase(
@@ -49,6 +58,6 @@ def logToDatabase(
 
     db.commit()
 
-    print(
+    logging.debug(
         f"Saved to database: {datetime} {site} {page_id} {page_title} {rev_id} {user_name} {link} {base_domain}"
     )

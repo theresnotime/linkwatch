@@ -3,3 +3,6 @@ venv/
 .vscode/
 __pycache__/
 .tox/
+linkwatch.log
+linkwatch.maintenance.log
+linkwatch.db.log
