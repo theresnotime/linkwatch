@@ -148,6 +148,15 @@ def getLikelyArchives() -> int:
     return result[0]
 
 
+def getSize(db: str) -> str:
+    """"""
+    cursor.execute(
+        f"SELECT sum((data_length+index_length)/1024/1024) FROM information_schema.tables WHERE information_schema.tables.table_schema = '{db}' GROUP BY table_schema"
+    )
+    result = cursor.fetchone()
+    return str(result[0])
+
+
 def getMarked() -> int:
     """"""
     cursor.execute(
@@ -178,6 +187,7 @@ def doStats() -> None:
     print("=== Stats ===")
     print(f"Running on db: {constants.DB_DATABASE}")
     print(f"Running on view: {constants.DB_VIEW}", end="\n\n")
+    print(f"Database size: {getSize(constants.DB_DATABASE)}MB")
     print(f"Total rows: {getCount()}")
     print(f"Rows marked as needing maintenance: {getMarked()}")
     print(f"Rows with empty base domains: {getEmpty()}")
