@@ -28,6 +28,49 @@ logging.basicConfig(
 )
 
 
+def copyTable(fromDB: str, toDB: str, dryrun: bool = False) -> None:
+    """Copy table"""
+    print("=== Copy table ===")
+    if dryrun:
+        print("Dry run, no changes will be made")
+    print(f"Copying from: {fromDB}")
+    print(f"Copying to: {toDB}")
+    print(f"Running on table: {constants.DB_TABLE}", end="\n\n")
+    # Harcoded safety check
+    if fromDB == toDB:
+        logging.error("Can't copy table to same database")
+        sys.exit(1)
+    if toDB == "linkwatch":
+        logging.error("You are trying to copy TO the production database")
+        sys.exit(1)
+    if not dryrun:
+        logging.info(f"DROP TABLE IF EXISTS {toDB}.{constants.DB_TABLE}")
+        cursor.execute(f"DROP TABLE IF EXISTS {toDB}.{constants.DB_TABLE}")
+        logging.info(
+            f"CREATE TABLE {toDB}.{constants.DB_TABLE} LIKE {fromDB}.{constants.DB_TABLE}"
+        )
+        cursor.execute(
+            f"CREATE TABLE {toDB}.{constants.DB_TABLE} LIKE {fromDB}.{constants.DB_TABLE}"
+        )
+        logging.info(
+            f"INSERT {toDB}.{constants.DB_TABLE} SELECT * FROM {fromDB}.{constants.DB_TABLE}"
+        )
+        cursor.execute(
+            f"INSERT {toDB}.{constants.DB_TABLE} SELECT * FROM {fromDB}.{constants.DB_TABLE}"
+        )
+        db.commit()
+    else:
+        print("Dry run, no changes will be made, but would have run:")
+        print(f"DROP TABLE IF EXISTS {toDB}.{constants.DB_TABLE}")
+        print(
+            f"CREATE TABLE {toDB}.{constants.DB_TABLE} LIKE {fromDB}.{constants.DB_TABLE}"
+        )
+        print(
+            f"INSERT {toDB}.{constants.DB_TABLE} SELECT * FROM {fromDB}.{constants.DB_TABLE}"
+        )
+    logging.info("Finished copying table")
+
+
 def tidyArchiveLinks(base_domain: str, regex: str, dryrun: bool = False) -> int:
     """"""
     tidyCount = 0
@@ -160,6 +203,8 @@ if __name__ == "__main__":
         elif args[0] == "archiveorg":
             tidyCount = tidyArchiveLinks("archive.org", constants.RE_ARCHIVEORG, dryrun)
             logging.info(f"Tidied {tidyCount} archive.org links")
+        elif args[0] == "sync":
+            copyTable("linkwatch", "linkwatchdev", dryrun)
         else:
             print("Invalid argument, exiting...")
             exit(1)
