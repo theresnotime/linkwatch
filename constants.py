@@ -1,0 +1,26 @@
+import json
+import os
+import typing
+
+import dotenv
+
+dotenv.load_dotenv()
+
+# Version
+VERSION = "1.0.0"
+
+with open("config/allowlist.json", encoding="utf-8") as allowfile:
+    ALLOWLIST = json.load(allowfile)
+
+# Constants
+SITE = typing.cast(str, "wikipedia")  # type: ignore
+FULL_SITE = typing.cast(str, "en.wikipedia.org")  # type: ignore
+# Generated
+LINK_URL = typing.cast(str, f"https://{FULL_SITE}/wiki/")  # type: ignore
+
+# DB
+DB_HOST = typing.cast(str, os.getenv("DB_HOST"))
+DB_USER = typing.cast(str, os.getenv("DB_USER"))
+DB_PASSWORD = typing.cast(str, os.getenv("DB_PASSWORD"))
+DB_DATABASE = typing.cast(str, os.getenv("DB_DATABASE"))
+DB_PORT = typing.cast(str, os.getenv("DB_PORT"))
