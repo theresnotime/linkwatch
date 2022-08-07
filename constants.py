@@ -8,18 +8,12 @@ import dotenv
 dotenv.load_dotenv()
 
 # Version
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 with open(dir_path + "/config/allowlist.json", encoding="utf-8") as allowfile:
     ALLOWLIST = json.load(allowfile)
-
-# Constants
-SITE = typing.cast(str, "wikipedia")  # type: ignore
-FULL_SITE = typing.cast(str, "en.wikipedia.org")  # type: ignore
-# Generated
-LINK_URL = typing.cast(str, f"https://{FULL_SITE}/wiki/")  # type: ignore
 
 # DB
 DB_HOST = typing.cast(str, os.getenv("DB_HOST"))

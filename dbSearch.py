@@ -50,6 +50,7 @@ def searchBase() -> None:
         result = cursor.fetchone()
         print(f"{result[0]} results found")
 
+
 if __name__ == "__main__":
     if len(args) < 2:
         print("Usage: dbSearch.py <type> <query>")

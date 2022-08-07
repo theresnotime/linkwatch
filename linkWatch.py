@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from pywikibot.comms.eventstreams import EventStreams
 
 import allowlist
+import constants
 import logger
 
 
@@ -46,4 +49,9 @@ def main():
 
 
 if __name__ == "__main__":
+    print("=== LinkWatch started ===")
+    print(f"Started at: {datetime.now()}")
+    print(f"Version: {constants.VERSION}")
+    print(f"Running on db: {constants.DB_DATABASE}")
+    print(f"Running on view: {constants.DB_VIEW}", end="\n\n")
     main()
