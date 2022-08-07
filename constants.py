@@ -28,6 +28,7 @@ DB_PASSWORD = typing.cast(str, os.getenv("DB_PASSWORD"))
 DB_DATABASE = typing.cast(str, os.getenv("DB_DATABASE"))
 DB_PORT = typing.cast(str, os.getenv("DB_PORT"))
 DB_TABLE = typing.cast(str, os.getenv("DB_TABLE"))
+DB_VIEW = typing.cast(str, os.getenv("DB_VIEW"))
 
 # Regexes
 RE_ARCHIVEORG = re.compile(

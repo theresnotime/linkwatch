@@ -1,4 +1,5 @@
 import re
+import sys
 
 import mysql.connector
 import tldextract
@@ -15,7 +16,7 @@ db = mysql.connector.connect(
 cursor = db.cursor()
 
 
-def tidyArchiveLinks(base_domain: str, regex: str) -> int:
+def tidyArchiveLinks(base_domain: str, regex: str, dryrun: bool = False) -> int:
     """"""
     tidyCount = 0
     cursor.execute(
@@ -36,26 +37,70 @@ def tidyArchiveLinks(base_domain: str, regex: str) -> int:
             cursor.execute(
                 f"UPDATE {constants.DB_TABLE} SET url = '{new_url}', base_domain = '{base_domain}' WHERE record_id = {row[0]}"
             )
-            db.commit()
+            if not dryrun:
+                db.commit()
             tidyCount += 1
 
     return tidyCount
 
 
-def tidyLinks() -> None:
+def tidyLinks(dryrun: bool = False) -> None:
     """Tidy links"""
     print("Tidying archive.org links...")
-    tidyCount = tidyArchiveLinks("archive.org", constants.RE_ARCHIVEORG)
+    tidyCount = tidyArchiveLinks("archive.org", constants.RE_ARCHIVEORG, dryrun)
     print(f"Finished tidying {tidyCount} archive.org links!")
 
 
-def doMaintenance() -> None:
+def doMaintenance(dryrun: bool = False) -> None:
     """Do maintenance"""
     print("=== Data maintenance ===")
+    if dryrun:
+        print("Dry run, no changes will be made")
     print(f"Running on table: {constants.DB_TABLE}", end="\n\n")
-    tidyLinks()
+    tidyLinks(dryrun)
     print("Finished data maintenance!")
 
 
+def getEmpty() -> int:
+    """"""
+    cursor.execute(
+        f"SELECT COUNT(record_id) as `count` FROM {constants.DB_VIEW} WHERE base_domain = ''"
+    )
+    result = cursor.fetchone()
+    return result[0]
+
+
+def getCount() -> int:
+    """"""
+    cursor.execute(f"SELECT COUNT(record_id) as `count` FROM {constants.DB_VIEW}")
+    result = cursor.fetchone()
+    return result[0]
+
+
+def doStats() -> None:
+    """Do stats"""
+    print("=== Stats ===")
+    print(f"Running on view: {constants.DB_VIEW}", end="\n\n")
+    print(f"Total rows: {getCount()}")
+    print(f"Empty base domains: {getEmpty()}")
+
+
 if __name__ == "__main__":
-    doMaintenance()
+    args = sys.argv[1:]
+    if "--dryrun" in args:
+        dryrun = True
+    else:
+        dryrun = False
+
+    if len(args) == 0:
+        doStats()
+        print("\n")
+        doMaintenance(dryrun)
+    else:
+        if args[0] == "run":
+            doMaintenance(dryrun)
+        elif args[0] == "stats":
+            doStats()
+        else:
+            print("Invalid argument, exiting...")
+            exit(1)
