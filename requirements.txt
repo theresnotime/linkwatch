@@ -10,4 +10,4 @@ urllib3==1.26.9
 python-dotenv==0.20.0
 tldextract==3.3.0
 ftfy==6.1.1
-mysql-connector-python==8.0.29
+mysql-connector-python==8.0.30
