@@ -15,15 +15,6 @@ db = mysql.connector.connect(
 )
 cursor = db.cursor()
 
-logging.basicConfig(
-    handlers=[logging.FileHandler("linkwatch.db.log"), logging.StreamHandler()],
-    encoding="utf-8",
-    level=logging.INFO,
-    format="[%(asctime)s]: %(levelname)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-
 def logToDatabase(
     site: str,
     page_id: int,
