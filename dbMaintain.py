@@ -51,7 +51,8 @@ def tidyLinks() -> None:
 
 def doMaintenance() -> None:
     """Do maintenance"""
-    print("=== Data maintenance ===", end="\n\n")
+    print("=== Data maintenance ===")
+    print(f"Running on table: {constants.DB_TABLE}", end="\n\n")
     tidyLinks()
     print("Finished data maintenance!")
 

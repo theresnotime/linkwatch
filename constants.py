@@ -31,5 +31,5 @@ DB_TABLE = typing.cast(str, os.getenv("DB_TABLE"))
 
 # Regexes
 RE_ARCHIVEORG = re.compile(
-    r"http(s)?://web\.archive\.org\/web\/\d+\/(?P<url>http(s)?:.*)$", re.IGNORECASE
+    r"http(s)?://web\.archive\.org\/web\/(\d+|\*)\/(?P<url>http(s)?:.*)$", re.IGNORECASE
 )
